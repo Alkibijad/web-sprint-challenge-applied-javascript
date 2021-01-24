@@ -1,4 +1,38 @@
-const Card = (article) => {
+import axios from 'axios'
+
+
+const Card = (object) => {
+    const newCard = document.createElement("div");
+    newCard.classList.add("card");
+  
+    const header = document.createElement("div");
+    header.classList.add("headline");
+    header.textContent = object.headline;
+  
+    const imageContainer = document.createElement("div");
+    imageContainer.classList.add("img-container");
+  
+    const newImg = document.createElement("img");
+    newImg.src = object.authorPhoto;
+  
+    const span = document.createElement("span");
+    span.textContent = object.authorName;
+
+    const authorName = document.createElement("div")
+    authorName.classList.add("author")
+  
+    newCard.appendChild(header);
+    newCard.appendChild(authorName)
+    authorName.appendChild(imageContainer);
+    imageContainer.appendChild(newImg);
+    authorName.appendChild(span);
+
+    newCard.addEventListener ('click', ()=>{
+      console.log(object.headline)
+
+    })
+    return newCard;
+  }
   // TASK 5
   // ---------------------
   // Implement this function, which should return the markup you see below.
@@ -17,9 +51,31 @@ const Card = (article) => {
   //   </div>
   // </div>
   //
-}
+
 
 const cardAppender = (selector) => {
+
+  const mainContainer = document.querySelector(selector);
+
+  axios
+  .get("https://lambda-times-api.herokuapp.com/articles")
+  .then((result) => {
+    const dataSet = result.data.articles;
+    // console.log(Object.entries(dataSet));
+    Object.entries(dataSet).forEach((subSet) => {
+      // fix node class so they match tabs
+      console.log(subSet[1]);
+        subSet[1].forEach((article) => {
+          mainContainer.appendChild(Card(article));
+        });
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+  })
+}
+
+
   // TASK 6
   // ---------------------
   // Implement this function that takes a css selector as its only argument.
@@ -28,6 +84,6 @@ const cardAppender = (selector) => {
   // Create a card from each and every article object in the response, using the Card component.
   // Append each card to the element in the DOM that matches the selector passed to the function.
   //
-}
+
 
 export { Card, cardAppender }
